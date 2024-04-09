@@ -8,9 +8,9 @@ class Board {
 	}
 
 	fromString(string) {
-		stringList = string.split("");
+		let stringList = string.split("");
 		
-		intList = []
+		let intList = []
 		for (const char of stringList) {
 			intList.push(Number(char));
 		}
@@ -76,6 +76,10 @@ class Board {
 		return newBoard;
 	}
 
+	getCurrentPlayer() {
+		return this.currPlayer;
+	} 
+
 	* getAll() {
 		for (var i = 0; i < this.board.length; i++) {
 			yield this.board[i]
@@ -83,16 +87,20 @@ class Board {
 	}
 
 	getWinner() {
-		for (var i=0; i<=2; i++) {
-			if (this.board[i].getPlayerNumber() == 2) {
-				return 2;
-			}
+		for (var i=6; i<=8; i++) {
+			try {
+				if (this.board[i].getPlayerNumber() == 2) {
+					return 2;
+				}
+			} catch (error) {}
 		}
 
-		for (var i=6; i<=8; i++) {
-			if (this.board[i].getPlayerNumber() == 1) {
-				return 1;
-			}
+		for (var i=0; i<=2; i++) {
+			try {
+				if (this.board[i].getPlayerNumber() == 1) {
+					return 1;
+				}
+			} catch (error) {}
 		}
 
 		return null;
@@ -115,12 +123,17 @@ class Board {
 	}
 
 	findMoves() {
-		let allMoves = []
+		let allMoves = [];
 		for (const pawn of this.getAll()) {
 			try { 
-				if (pawn.getPlayerNumber() == this.nextPlayer) { allMoves.push(pawn.findMoves()); } 
+				if (pawn.getPlayerNumber() == this.nextPlayer) { 
+					for (const move of pawn.findMoves()) {
+						allMoves.push(move);
+					}
+				} 
 			} catch(e){}
 		}
+		return allMoves;
 	}
 
 	move([x1,y1], [x2,y2]) {
