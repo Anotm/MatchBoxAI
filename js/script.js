@@ -29,6 +29,27 @@ function setWinners(dic, player) {
 	}
 }
 
+function paintP1Data() {
+	
+}
+
+function paintP2Data() {
+	let div = $("div.game-UI > div.p2");
+	div.empty();
+	
+	for (const key of Object.keys(p2BabyBrain)) {
+		div.append('<div class="entry"></div>')
+		let entry = $("div.game-UI > div.p2 > div.entry");
+		entry.append('<div class="key">' + key + '</div>');
+		entry.append('<div class="values"></div>');
+
+		let values = $("div.game-UI > div.p2 > div.entry > div.values");
+		for (const el of p2BabyBrain[key]) {
+			values.append('<div class="value">' + el + '</div>');
+		}
+	}
+}
+
 function prettify(string) {
 	let newString = "";
 	let stringList = string.split("");
@@ -160,3 +181,5 @@ for (var i = 0; i < 50; i++) {
 	console.log("--------------------------")
 	playCC2();
 }
+
+paintP2Data();

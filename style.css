@@ -1,0 +1,34 @@
+div.game-UI {
+	display: flex;
+	flex-direction: row;
+	width: 75%;
+}
+
+div.data {
+	display: flex;
+	flex-direction: column;
+	font-size: 10px;
+	gap: 1rem;
+}
+
+div.data > div.entry{
+	display: flex;
+	flex-direction: row;
+}
+
+div.data > div.entry > div.key{
+	width: 1rem;
+	overflow-wrap: break-word;
+	margin-right: 1rem;
+}
+
+div.data > div.entry > div.values{
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+div.data > div.entry > div.values > div.value{
+	width: 1rem;
+	overflow-wrap: break-word;
+}
