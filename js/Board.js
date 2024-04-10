@@ -1,8 +1,8 @@
 class Board {
 	constructor() {
 		this.board = [];
-		this.currPlayer = 1;
-		this.nextPlayer = 2;
+		this.currPlayer = 2;
+		this.nextPlayer = 1;
 		this.p1Color = "white";
 		this.p2Color = "black";
 	}
@@ -50,22 +50,6 @@ class Board {
 		return string;
 	}
 
-	prettify() {
-		let string = "";
-		for (var i=0; i<this.board.length; i++) {
-			if (this.board[i] == null) {
-				string += "0";
-				// console.log(null);
-			} else {
-				string += this.board[i].getPlayerNumber().toString();
-				// console.log(this.board[i].getPlayerNumber().toString());
-			}
-			if (i%3 == 2) string += "\n";
-		}
-		// console.log(string);
-		return string;
-	}
-
 	copyBoard() {
 		let newBoard = new Board();
 		for (const pawn of this.getAll()) {
@@ -76,9 +60,8 @@ class Board {
 		return newBoard;
 	}
 
-	getCurrentPlayer() {
-		return this.currPlayer;
-	} 
+	getCurrentPlayer() { return this.currPlayer; } 
+	getNextPlayer() { return this.nextPlayer; } 
 
 	* getAll() {
 		for (var i = 0; i < this.board.length; i++) {
@@ -87,7 +70,7 @@ class Board {
 	}
 
 	getWinner() {
-		for (var i=6; i<=8; i++) {
+		for (var i=6; i<=8; i++) { // if player 2 won
 			try {
 				if (this.board[i].getPlayerNumber() == 2) {
 					return 2;
@@ -95,7 +78,7 @@ class Board {
 			} catch (error) {}
 		}
 
-		for (var i=0; i<=2; i++) {
+		for (var i=0; i<=2; i++) { // if player 1 won
 			try {
 				if (this.board[i].getPlayerNumber() == 1) {
 					return 1;
@@ -103,7 +86,18 @@ class Board {
 			} catch (error) {}
 		}
 
-		return null;
+		var player = 0; // if a player capture all other pieces
+		for (var i=0; i<this.board.length; i++) {
+			if (this.board[i] != null) {
+				if (player == 0) {
+					player = this.board[i].getPlayerNumber();
+				} else if (this.board[i].getPlayerNumber() != player) {
+					return null;
+				}
+			}
+		}
+
+		return player;
 	}
 
 	get([x2,y2]) {
@@ -113,9 +107,7 @@ class Board {
 		return this.board[3*y2 + x2];
 	}
 
-	set([x,y], pawn) {
-		this.board[3*y + x] = pawn;
-	}
+	set([x,y], pawn) { this.board[3*y + x] = pawn; }
 
 	setColors(p1, p2) {
 		this.p1Color = p1;
@@ -151,7 +143,5 @@ class Board {
 		}
 	}
 
-	push(object) {
-		this.board.push(object);
-	}
+	push(object) { this.board.push(object); }
 }
