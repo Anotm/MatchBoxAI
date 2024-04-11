@@ -1,34 +1,68 @@
 div.game-UI {
+	position: relative;
 	display: flex;
 	flex-direction: row;
-	width: 75%;
+	justify-content: center;
 }
 
 div.data {
 	display: flex;
 	flex-direction: column;
 	font-size: 10px;
-	gap: 1rem;
+	gap: 0.3rem;
+	background: #eee;
+	padding: 0.5rem;
 }
 
-div.data > div.entry{
+div.data > div.entry {
 	display: flex;
 	flex-direction: row;
+	border: solid 0.15rem #55f;
+	opacity: 0.4;
+	transition: all 0.2s ease-in;
+}
+
+div.data > div.entry:hover {
+	opacity: 1.0;
 }
 
 div.data > div.entry > div.key{
-	width: 1rem;
-	overflow-wrap: break-word;
-	margin-right: 1rem;
+	margin-right: 0.5rem;
+	background: #55f;
+	padding: 0 0.35rem 0 0.2rem;
+	color: #ddf;
 }
 
 div.data > div.entry > div.values{
 	display: flex;
 	flex-direction: row;
-	gap: 1rem;
+	gap: 0.5rem;
 }
 
 div.data > div.entry > div.values > div.value{
-	width: 1rem;
-	overflow-wrap: break-word;
+	padding: 0 0.2rem;
+}
+
+div.data > div.entry > div.values > div.value:nth-child(1){
+	background: #f5f;
+	color: #fdf;
+}
+
+div.data > div.entry > div.values > div.value:nth-child(2){
+	background: #5f5;
+	color: #080;
+}
+
+div.data > div.entry > div.values > div.value:nth-child(3){
+	background: #f55;
+	color: #fdd;
+}
+
+div.data > div.entry > div.values > div.value:nth-child(3){
+	background: #5ff;
+	color: #088;
+}
+
+div.game {
+	width: 40%;
 }

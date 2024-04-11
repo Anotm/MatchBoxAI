@@ -2,20 +2,27 @@ var p1BabyBrain = {};
 var p2BabyBrain = {};
 var gameBoard = new Board();
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function remove(dic, key, value) {
-	var i = 0;
-	let newList = []
-	for (const el of dic[key]) {
-		if (el != value) newList.push(el);
+	if (dic[key] !== undefined) {
+		var i = 0;
+		let newList = []
+		for (const el of dic[key]) {
+			if (el != value) newList.push(el);
+		}
+		dic[key] = newList;
 	}
-	dic[key] = newList;
+	
 }
 
 function randEl(list) {
 	return list[Math.floor(Math.random()*list.length)];
 }
 
-function setWinners(dic, player) {
+async function setWinners(dic, player) {
 	let keys = Object.keys(dic);
 
 	for (const key of keys) {
@@ -27,27 +34,28 @@ function setWinners(dic, player) {
 		}
 		if (newList.length != 0) dic[key] = newList;
 	}
+	// await sleep(1000);
+	// paintP2Data();
 }
 
 function paintP1Data() {
 	
 }
 
-function paintP2Data() {
-	let div = $("div.game-UI > div.p2");
-	div.empty();
+async function paintP2Data() {
+	$("div.game-UI > div.p2").empty();
 	
 	for (const key of Object.keys(p2BabyBrain)) {
-		div.append('<div class="entry"></div>')
-		let entry = $("div.game-UI > div.p2 > div.entry");
-		entry.append('<div class="key">' + key + '</div>');
-		entry.append('<div class="values"></div>');
+		$("div.game-UI > div.p2").append('<div class="entry" id='+key+'></div>')
+		$("div.game-UI > div.p2 > div.entry#"+key).append('<div class="key">' + key + '</div>');
+		$("div.game-UI > div.p2 > div.entry#"+key).append('<div class="values"></div>');
 
-		let values = $("div.game-UI > div.p2 > div.entry > div.values");
 		for (const el of p2BabyBrain[key]) {
-			values.append('<div class="value">' + el + '</div>');
+			$("div.game-UI > div.p2 > div.entry#"+key+" > div.values").append('<div class="value">' + el + '</div>');
 		}
-	}
+		await sleep(100);
+	}	
+	return;
 }
 
 function prettify(string) {
@@ -79,7 +87,7 @@ function setUpBoard(p1Color, p2Color) {
 	}
 }
 
-function playCC1() {
+async function playCC1() {
 	setUpBoard("white", "black");
 
 	let history = [];
@@ -169,17 +177,24 @@ function playCC2() {
 	}
 }
 
-for (var i = 0; i < 1000; i++) {
-	console.log("--------------------------")
-	playCC1();
-}
-console.log(p2BabyBrain);
-setWinners(p2BabyBrain, 2);
-console.log(p2BabyBrain);
 
-for (var i = 0; i < 50; i++) {
-	console.log("--------------------------")
-	playCC2();
+
+async function run() {
+	for (var i = 0; i < 500; i++) {
+		console.log("--------------------------")
+		playCC1();
+		await paintP2Data();
+	}
+
+	console.log(p2BabyBrain);
+	setWinners(p2BabyBrain, 2);
+	console.log(p2BabyBrain);
+	paintP2Data();
+
+	for (var i = 0; i < 50; i++) {
+		console.log("--------------------------")
+		playCC2();
+	}
 }
 
-paintP2Data();
+run();
