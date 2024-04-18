@@ -71,9 +71,6 @@ div.game {
 div.game > div.cell {
 	position: relative;
 	display: flex;
-}
-
-div.game > div.cell {
 	cursor: pointer;
 }
 
