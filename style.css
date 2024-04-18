@@ -6,6 +6,7 @@ div.game-UI {
 }
 
 div.data {
+	--op: 0.2;
 	display: flex;
 	flex-direction: column;
 	font-size: 10px;
@@ -14,11 +15,20 @@ div.data {
 	padding: 0.5rem;
 }
 
+div.data:before{
+	content: "{";
+	opacity: var(--op);s
+}
+
+div.data:after{
+	content: "}";
+	opacity: var(--op);
+}
+
 div.data > div.entry {
 	display: flex;
 	flex-direction: row;
-	border: solid 0.15rem #55f;
-	opacity: 0.4;
+	opacity: var(--op);
 	transition: all 0.2s ease-in;
 }
 
@@ -27,40 +37,19 @@ div.data > div.entry:hover {
 }
 
 div.data > div.entry > div.key{
-	margin-right: 0.5rem;
-	background: #55f;
-	padding: 0 0.35rem 0 0.2rem;
-	color: #ddf;
+	padding-left: 1rem;
+	color: rgb(150, 0, 150);
 }
 
 div.data > div.entry > div.values{
+	margin-left: 0.35rem;
 	display: flex;
 	flex-direction: row;
 	gap: 0.5rem;
 }
 
 div.data > div.entry > div.values > div.value{
-	padding: 0 0.2rem;
-}
-
-div.data > div.entry > div.values > div.value:nth-child(1){
-	background: #f5f;
-	color: #fdf;
-}
-
-div.data > div.entry > div.values > div.value:nth-child(2){
-	background: #5f5;
-	color: #080;
-}
-
-div.data > div.entry > div.values > div.value:nth-child(3){
-	background: #f55;
-	color: #fdd;
-}
-
-div.data > div.entry > div.values > div.value:nth-child(3){
-	background: #5ff;
-	color: #088;
+	color: rgb(255, 0, 255);
 }
 
 div.game {
