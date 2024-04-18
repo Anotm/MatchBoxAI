@@ -1,6 +1,45 @@
-var p2BabyBrain = {};
 var gameBoard = new Board();
 var playedMove = [];
+var p2BabyBrain = {};
+var p2BigBrain = {
+	"002012000": [ "000022000", "002010002" ],
+	"002111000": [],
+	"002122000": [ "002102020", "002120002" ],
+	"002210000": [ "000220000", "002010200" ],
+	"002221000": [ "002021200", "002201020" ],
+	"020021000": [ "000022000", "020001020" ],
+	"020112000": [ "020110002" ],
+	"020120000": [ "000220000", "020100020" ],
+	"020211000": [ "020011200" ],
+	"022010001": [ "020012001" ],
+	"022010100": [ "020012100" ],
+	"022021100": [ "002022100" ],
+	"022101100": [ "002201100" ],
+	"022120001": [ "002220001", "022100002", "022100021" ],
+	"022211100": [],
+	"200012000": [ "000022000", "200010002" ],
+	"200111000": [],
+	"200122000": [ "200102020", "200120002" ],
+	"200210000": [ "000220000", "200010200" ],
+	"200221000": [ "200021200", "200201020" ],
+	"202001100": [ "002201100" ],
+	"202011010": [ "002021010" ],
+	"202012100": [ "002022100", "200022100" ],
+	"202100001": [ "200102001" ],
+	"202102010": [ "202100020", "202100012" ],
+	"202110010": [ "200120010" ],
+	"202201010": [ "202001020", "202001210" ],
+	"202210001": [ "002220001", "200220001", "202010201" ],
+	"220010001": [ "020210001" ],
+	"220010100": [ "020210100" ],
+	"220021100": [ "200022100" ],
+	"220101001": [ "200102001" ],
+	"220112001": [],
+	"220120001": [ "200220001", "220100002", "220100021" ],
+	"222001110": [ "202002110" ],
+	"222010101": [ "022020101", "220020101" ],
+	"222100011": [ "202200011" ]
+};
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -17,7 +56,7 @@ async function p2Add(key, value) {
 	for (const el of p2BabyBrain[key]) {
 		$("div.game-UI > div.p2 > div.entry#"+key+" > div.values").append('<div class="value" id="'+el+'">"' + el + '"</div>');
 	}
-	await sleep(1);
+	await sleep(10);
 }
 
 async function p2Remove(key, value) {
@@ -30,7 +69,7 @@ async function p2Remove(key, value) {
 		$("div.entry#"+key+" > div.values > div.value#"+value).remove();
 		p2BabyBrain[key] = newList;
 	}
-	await sleep(1);
+	await sleep(10);
 }
 
 function randEl(list) {
@@ -170,60 +209,124 @@ async function playCC2() {
 	}
 }
 
+async function loadBigBrain() {
+	$("div.game-UI > div.p2").empty();
+	let keys = Object.keys(p2BigBrain);
+	for (key of keys) {
+		await p2Add(key, p2BigBrain[key]);
+	}
+}
+
+async function p2TeachBabyBrain() {
+	const test = true;
+	$("div.game-UI > div.p2").empty();
+	p2BabyBrain = {};
+
+	for (var i = 0; i < 10000; i++) {
+		console.log("--------------------------")
+		gameBoard = new Board();
+		await playCC1();
+	}
+
+	p2SetWinners();
+
+	if (test) {
+		winners = [0,0,0]
+
+		for (var i = 0; i < 100; i++) {
+			console.log("--------------------------")
+			gameBoard = new Board();
+			win = await playCC2();
+			winners[win]++;
+		}
+		console.log(winners);
+	}
+}
+
+function paintBoard() {
+	const print = false;
+	const string = gameBoard.toString();
+	if (print) console.log(string);
+
+	for (cell of $("div.cell.p1")) $(cell).removeClass("p1");
+	for (cell of $("div.cell.p2")) $(cell).removeClass("p2");
+
+	for (var i = 0; i < string.length; i++) {
+		const chr = string[i];
+		if (chr == "1" || chr == "2") {
+			$("div.cell#" + i).addClass("p" + chr);
+		}
+	}
+}
+
 function validPlayedMove() {
 	console.log(playedMove);
-	const print = true;
+	const print = false;
+	// check if clicked on same tile
 	if (playedMove[0][0] == playedMove[1][0] && playedMove[0][1] == playedMove[1][1]) {
 		if (print) console.log("invalid");
 		return false;
 	}
+	// check if direction/distance is valid
 	if (playedMove[1][1]-playedMove[0][1] != -1) {
 		if (print) console.log("invalid");
 		return false;
 	}
+
+	const space = gameBoard.get(playedMove[1]);
+
+	// check if peice blocking straigh path
+	if (playedMove[0][0] == playedMove[1][0] && space != null) {
+		if (print) console.log("invalid");
+		return false;
+	}
+	// check if peice can capture
+	if (Math.abs(playedMove[0][0]-playedMove[1][0]) == 1 && (space == null || space.getPlayerNumber() == 1)) {
+		if (print) console.log("invalid");
+		return false;
+	}
+
 	if (print) console.log("valid");
 	return true;
 }
 
 async function cellClick(id) {
-		playedMove.push([id%3, Math.floor(id/3)]);
-		$("div.cell#" + id).addClass("cellClicked");
-		await sleep(100);
-		if (playedMove.length == 2) {
-			validPlayedMove();
-			for (const cell of $("div.cell")) {
-				$(cell).removeClass("cellClicked");
-			}
+	playedMove.push([id%3, Math.floor(id/3)]);
+	$("div.cell#" + id).addClass("cellClicked");
+	await sleep(100);
+
+	if (playedMove.length == 2) {
+		if (validPlayedMove()) {
+			gameBoard.move(playedMove[0],playedMove[1]);
+
+			await sleep(100);
+
+			for (const cell of $("div.cell")) $(cell).removeClass("cellClicked");
 			playedMove = [];
+			paintBoard();
+
+			await sleep(300);
+
+			nextMove = randEl(p2BabyBrain[gameBoard.toString()]);
+			console.log(nextMove);
+			gameBoard.fromString(nextMove);
+			paintBoard();
+			
+			await sleep(100);
 		}
+		for (const cell of $("div.cell")) $(cell).removeClass("cellClicked");
+		playedMove = [];
+		paintBoard();
+	}
 }
 
 
 
 async function run() {
-	$("div.game-UI > div.p2").empty();
-
-	for (var i = 0; i < 100; i++) {
-		console.log("--------------------------")
-		gameBoard = new Board();
-		await playCC1();
-		// await paintP2Data();
-	}
-
-	// console.log(p2BabyBrain);
-	p2SetWinners();
-	// console.log(p2BabyBrain);
-
-	winners = [0,0,0]
-
-	for (var i = 0; i < 10; i++) {
-		console.log("--------------------------")
-		gameBoard = new Board();
-		win = await playCC2();
-		winners[win]++;
-	}
-	console.log(winners);
 	gameBoard = new Board();
+	setUpBoard();
+	await loadBigBrain();
+	paintBoard();
 }
 
 run();
