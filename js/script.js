@@ -1,5 +1,6 @@
 var p2BabyBrain = {};
 var gameBoard = new Board();
+var playedMove = [];
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -36,17 +37,21 @@ function randEl(list) {
 	return list[Math.floor(Math.random()*list.length)];
 }
 
-async function setWinners(dic, player) {
-	let keys = Object.keys(dic);
+async function p2SetWinners() {
+	let keys = Object.keys(p2BabyBrain);
 
 	for (const key of keys) {
 		let newList = [];
-		for (const string of dic[key]) {
+		for (const string of p2BabyBrain[key]) {
 			let b = new Board();
 			b.fromString(string);
-			if (b.getWinner() == player) newList.push(string);
+			if (b.getWinner() != 2) newList.push(string);
 		}
-		if (newList.length != 0) dic[key] = newList;
+		if (newList.length != 0) {
+			for (const string of p2BabyBrain[key]) {
+				if (!newList.includes(string)) p2Remove(key,string);
+			}
+		}
 	}
 	// await sleep(1000);
 	// paintP2Data();
@@ -165,29 +170,60 @@ async function playCC2() {
 	}
 }
 
+function validPlayedMove() {
+	console.log(playedMove);
+	const print = true;
+	if (playedMove[0][0] == playedMove[1][0] && playedMove[0][1] == playedMove[1][1]) {
+		if (print) console.log("invalid");
+		return false;
+	}
+	if (playedMove[1][1]-playedMove[0][1] != -1) {
+		if (print) console.log("invalid");
+		return false;
+	}
+	if (print) console.log("valid");
+	return true;
+}
+
+async function cellClick(id) {
+		playedMove.push([id%3, Math.floor(id/3)]);
+		$("div.cell#" + id).addClass("cellClicked");
+		await sleep(100);
+		if (playedMove.length == 2) {
+			validPlayedMove();
+			for (const cell of $("div.cell")) {
+				$(cell).removeClass("cellClicked");
+			}
+			playedMove = [];
+		}
+}
+
 
 
 async function run() {
 	$("div.game-UI > div.p2").empty();
 
-	for (var i = 0; i < 1000; i++) {
+	for (var i = 0; i < 10000; i++) {
 		console.log("--------------------------")
+		gameBoard = new Board();
 		await playCC1();
 		// await paintP2Data();
 	}
 
-	console.log(p2BabyBrain);
-	setWinners(p2BabyBrain, 2);
-	console.log(p2BabyBrain);
+	// console.log(p2BabyBrain);
+	p2SetWinners();
+	// console.log(p2BabyBrain);
 
 	winners = [0,0,0]
 
-	for (var i = 0; i < 50; i++) {
+	for (var i = 0; i < 1000; i++) {
 		console.log("--------------------------")
+		gameBoard = new Board();
 		win = await playCC2();
 		winners[win]++;
 	}
-	console.log(winners)
+	console.log(winners);
+	gameBoard = new Board();
 }
 
 run();

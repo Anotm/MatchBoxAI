@@ -3,7 +3,11 @@ div.game-UI {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	align-items: center;
+	gap: 2rem;
 }
+
+/*----------------------------------------------------------------*/
 
 div.data {
 	--op: 0.2;
@@ -38,7 +42,7 @@ div.data > div.entry:hover {
 
 div.data > div.entry > div.key{
 	padding-left: 1rem;
-	color: rgb(150, 0, 150);
+	color: #707;
 }
 
 div.data > div.entry > div.values{
@@ -49,9 +53,36 @@ div.data > div.entry > div.values{
 }
 
 div.data > div.entry > div.values > div.value{
-	color: rgb(255, 0, 255);
+	color: #f0f;
 }
+
+/*----------------------------------------------------------------*/
 
 div.game {
 	width: 40%;
+	max-width: 300px;
+	aspect-ratio: 1;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+ 	grid-template-rows: repeat(3, 1fr);
+ 	border: solid 5px #555;
+}
+
+div.game > div.cell {
+	position: relative;
+	display: flex;
+}
+
+div.game > div.cell:nth-child(2n) {
+	background-color: #555;
+}
+div.game > div.cell:nth-child(2n-1) {
+	background-color: #eee;
+}
+
+div.game > div.cellClicked:after {
+	content: "";
+	width: 100%;
+	background: #f0f;
+	opacity: 0.3;
 }

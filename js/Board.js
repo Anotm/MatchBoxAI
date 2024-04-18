@@ -86,6 +86,8 @@ class Board {
 			} catch (error) {}
 		}
 
+		if (this.findMoves().length == 0) return this.currPlayer; // blocked opposing player;
+
 		var player = 0; // if a player capture all other pieces
 		for (var i=0; i<this.board.length; i++) {
 			if (this.board[i] != null) {
