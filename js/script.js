@@ -137,7 +137,7 @@ async function playCC2() {
 	setUpBoard("white", "black");
 
 	let history = [];
-	const print = false;
+	const print = true;
 	while (true) {
 		const isP2 = gameBoard.getNextPlayer() == 2;
 		let randMove = new Board();
@@ -203,7 +203,7 @@ async function cellClick(id) {
 async function run() {
 	$("div.game-UI > div.p2").empty();
 
-	for (var i = 0; i < 10000; i++) {
+	for (var i = 0; i < 100; i++) {
 		console.log("--------------------------")
 		gameBoard = new Board();
 		await playCC1();
@@ -216,7 +216,7 @@ async function run() {
 
 	winners = [0,0,0]
 
-	for (var i = 0; i < 1000; i++) {
+	for (var i = 0; i < 10; i++) {
 		console.log("--------------------------")
 		gameBoard = new Board();
 		win = await playCC2();

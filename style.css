@@ -15,7 +15,7 @@ div.data {
 	flex-direction: column;
 	font-size: 10px;
 	gap: 0.3rem;
-	background: #eee;
+	background-color: #eee;
 	padding: 0.5rem;
 }
 
@@ -73,6 +73,10 @@ div.game > div.cell {
 	display: flex;
 }
 
+div.game > div.cell {
+	cursor: pointer;
+}
+
 div.game > div.cell:nth-child(2n) {
 	background-color: #555;
 }
@@ -83,6 +87,14 @@ div.game > div.cell:nth-child(2n-1) {
 div.game > div.cellClicked:after {
 	content: "";
 	width: 100%;
-	background: #f0f;
+	background-color: #f0f;
 	opacity: 0.3;
+}
+
+div.game > div.cell.p1 {
+	background-image: url("images/P1.png");
+}
+
+div.game > div.cell.p2 {
+	background-image: url("images/P2.png");
 }
