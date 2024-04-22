@@ -62,7 +62,7 @@ async function p2Add(key, value) {
 }
 
 async function p2Remove(key, value) {
-	const print = true;
+	const print = false;
 	if (print) console.log(prettify(key) +  "\n" + prettify(value));
 	if (p2BabyBrain[key] !== undefined) {
 		var i = 0;
