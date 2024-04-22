@@ -70,7 +70,7 @@ class Board {
 	}
 
 	getWinner() {
-		for (var i=6; i<=8; i++) { // if player 2 won
+		for (var i=6; i<=8; i++) { // if player 2 reached end
 			try {
 				if (this.board[i].getPlayerNumber() == 2) {
 					return 2;
@@ -78,7 +78,7 @@ class Board {
 			} catch (error) {}
 		}
 
-		for (var i=0; i<=2; i++) { // if player 1 won
+		for (var i=0; i<=2; i++) { // if player 1 reached end
 			try {
 				if (this.board[i].getPlayerNumber() == 1) {
 					return 1;
@@ -130,6 +130,14 @@ class Board {
 		return allMoves;
 	}
 
+	setCurrentPlayer(p) {
+		if (p != this.currPlayer) {
+			let temp = this.currPlayer;
+			this.currPlayer = this.nextPlayer;
+			this.nextPlayer = temp;
+		}
+	}
+
 	move([x1,y1], [x2,y2]) {
 		if (x2<0 || x2>2 || y2<0 || y2>2) {
 			throw new Error("Coordinates Out Of Range - [" + x2 + ", " + y2 + "]");
@@ -138,11 +146,7 @@ class Board {
 		pawn.setCoordinates([x2,y2]);
 		this.set([x1,y1], null);
 		this.set([x2,y2], pawn);
-		if (pawn.getPlayerNumber() != this.currPlayer) {
-			let temp = this.currPlayer;
-			this.currPlayer = this.nextPlayer;
-			this.nextPlayer = temp;
-		}
+		this.setCurrentPlayer(pawn.getPlayerNumber());
 	}
 
 	push(object) { this.board.push(object); }

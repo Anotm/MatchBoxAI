@@ -53,8 +53,9 @@ async function p2Add(key, value) {
 	}
 	p2BabyBrain[key] = value;
 	$("div.game-UI > div.p2 > div.entry#"+key+" > div.values").empty();
+	const values = $("div.game-UI > div.p2 > div.entry#"+key+" > div.values");
 	for (const el of p2BabyBrain[key]) {
-		$("div.game-UI > div.p2 > div.entry#"+key+" > div.values").append('<div class="value" id="'+el+'">"' + el + '"</div>');
+		values.append('<div class="value" id="'+el+'">"' + el + '"</div>');
 	}
 	await sleep(10);
 }
@@ -210,6 +211,7 @@ async function playCC2() {
 }
 
 async function loadBigBrain() {
+	p2BabyBrain = {};
 	$("div.game-UI > div.p2").empty();
 	let keys = Object.keys(p2BigBrain);
 	for (key of keys) {
@@ -222,7 +224,7 @@ async function p2TeachBabyBrain() {
 	$("div.game-UI > div.p2").empty();
 	p2BabyBrain = {};
 
-	for (var i = 0; i < 10000; i++) {
+	for (var i = 0; i < 1000; i++) {
 		console.log("--------------------------")
 		gameBoard = new Board();
 		await playCC1();
@@ -260,8 +262,8 @@ function paintBoard() {
 }
 
 function validPlayedMove() {
-	console.log(playedMove);
 	const print = false;
+	if (print) console.log(playedMove);
 	// check if clicked on same tile
 	if (playedMove[0][0] == playedMove[1][0] && playedMove[0][1] == playedMove[1][1]) {
 		if (print) console.log("invalid");
@@ -290,6 +292,27 @@ function validPlayedMove() {
 	return true;
 }
 
+function setWinnerOverlay(winner) {
+	$("div.board > div.overlay").show();
+	$("div.board > div.overlay > *").show();
+	$("div.board > div.overlay > p").text("Winner: P" + winner);
+	$("div.board > div.overlay > button").click(refreshBoard);
+	$("div.board > div.overlay > button").text("Refresh");
+}
+
+function refreshBoard() {
+	gameBoard = new Board();
+	setUpBoard();
+	paintBoard();
+	$("div.board > div.overlay").hide();
+}
+
+function enableButtons(MT,AT,LT) {
+	$("#MT-btn").attr("disabled", !MT);
+	$("#AT-btn").attr("disabled", !AT);
+	$("#LT-btn").attr("disabled", !LT);
+}
+
 async function cellClick(id) {
 	playedMove.push([id%3, Math.floor(id/3)]);
 	$("div.cell#" + id).addClass("cellClicked");
@@ -307,9 +330,17 @@ async function cellClick(id) {
 
 			await sleep(300);
 
+			winner = gameBoard.getWinner();
+			if (winner != 0 && winner != null) {
+				// console.log(winner);
+				setWinnerOverlay(winner);
+				return;
+			}
+
 			nextMove = randEl(p2BabyBrain[gameBoard.toString()]);
-			console.log(nextMove);
+			// console.log(nextMove);
 			gameBoard.fromString(nextMove);
+			gameBoard.setCurrentPlayer(2);
 			paintBoard();
 			
 			await sleep(100);
@@ -317,16 +348,47 @@ async function cellClick(id) {
 		for (const cell of $("div.cell")) $(cell).removeClass("cellClicked");
 		playedMove = [];
 		paintBoard();
+
+		winner = gameBoard.getWinner();
+		if (winner != 0 && winner != null) {
+			setWinnerOverlay(winner);
+			return;
+		}
 	}
 }
 
+async function btnMT(){
+	enableButtons(false,false,false);
+	enableButtons(false,true,true);
+}
 
+async function btnAT(){
+	enableButtons(false,false,false);
+	$("div.board > div.overlay").show();
+	$("div.board > div.overlay > p").show();
+	$("div.board > div.overlay > p").text("Training...");
+	await p2TeachBabyBrain();
+	$("div.board > div.overlay").hide();
+	enableButtons(true,false,true);
+}
+
+async function btnLT(){
+	enableButtons(false,false,false);
+	$("div.board > div.overlay").show();
+	$("div.board > div.overlay > p").show();
+	$("div.board > div.overlay > p").text("Loading...");
+	await loadBigBrain();
+	$("div.board > div.overlay").hide();
+	enableButtons(true,true,false);
+}
 
 async function run() {
+	enableButtons(false,false,false);
 	gameBoard = new Board();
 	setUpBoard();
-	await loadBigBrain();
+	await btnLT();
 	paintBoard();
+	$("div.board > div.overlay").hide();
 }
 
 run();
