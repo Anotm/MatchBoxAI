@@ -1,4 +1,5 @@
 var gameBoard = new Board();
+var userHistory = [];
 var playedMove = [];
 var p2BabyBrain = {};
 var p2BigBrain = {
@@ -61,6 +62,8 @@ async function p2Add(key, value) {
 }
 
 async function p2Remove(key, value) {
+	const print = true;
+	if (print) console.log(prettify(key) +  "\n" + prettify(value));
 	if (p2BabyBrain[key] !== undefined) {
 		var i = 0;
 		let newList = []
@@ -78,6 +81,7 @@ function randEl(list) {
 }
 
 async function p2SetWinners() {
+	const print = false;
 	let keys = Object.keys(p2BabyBrain);
 
 	for (const key of keys) {
@@ -85,11 +89,14 @@ async function p2SetWinners() {
 		for (const string of p2BabyBrain[key]) {
 			let b = new Board();
 			b.fromString(string);
-			if (b.getWinner() != 2) newList.push(string);
+			if (b.getWinner() == 2) newList.push(string);
 		}
 		if (newList.length != 0) {
 			for (const string of p2BabyBrain[key]) {
-				if (!newList.includes(string)) p2Remove(key,string);
+				if (!newList.includes(string)) {
+					p2Remove(key,string);
+					if (print) console.log(prettify(string));
+				}
 			}
 		}
 	}
@@ -321,6 +328,7 @@ async function cellClick(id) {
 	if (playedMove.length == 2) {
 		if (validPlayedMove()) {
 			gameBoard.move(playedMove[0],playedMove[1]);
+			userHistory.push(gameBoard.toString());
 
 			await sleep(100);
 
@@ -332,15 +340,40 @@ async function cellClick(id) {
 
 			winner = gameBoard.getWinner();
 			if (winner != 0 && winner != null) {
-				// console.log(winner);
+				console.log(winner);
+				if (winner == 1 || winner == 0) { // remove loosing move from p2
+					let offset = (gameBoard.getCurrentPlayer() == 1) ? 2 : 1;
+					let key = userHistory[userHistory.length-offset-1];
+					let value = userHistory[userHistory.length-offset];
+					await p2Remove(key, value);
+					if (p2BabyBrain[key] != undefined && p2BabyBrain[key].length == 0) {
+						let key = userHistory[userHistory.length-offset-3];
+						let value = userHistory[userHistory.length-offset-2];
+						await p2Remove(key, value);
+					}
+				}
+				userHistory = [];
 				setWinnerOverlay(winner);
 				return;
+			}
+
+			const notInP2Brain = p2BabyBrain[gameBoard.toString()] === undefined;
+
+			if (notInP2Brain) {
+				let stringMoves = [];
+				let allMoves = gameBoard.findMoves();
+				for (const move of allMoves) {
+					stringMoves.push(move.toString());
+				}
+				await p2Add(gameBoard.toString(), stringMoves);
+				p2SetWinners();
 			}
 
 			nextMove = randEl(p2BabyBrain[gameBoard.toString()]);
 			// console.log(nextMove);
 			gameBoard.fromString(nextMove);
 			gameBoard.setCurrentPlayer(2);
+			userHistory.push(gameBoard.toString());
 			paintBoard();
 			
 			await sleep(100);
@@ -351,6 +384,18 @@ async function cellClick(id) {
 
 		winner = gameBoard.getWinner();
 		if (winner != 0 && winner != null) {
+			if (winner == 1 || winner == 0) { // remove loosing move from p2
+				let offset = (gameBoard.getCurrentPlayer() == 1) ? 2 : 1;
+				let key = userHistory[userHistory.length-offset-1];
+				let value = userHistory[userHistory.length-offset];
+				await p2Remove(key, value);
+				if (p2BabyBrain[key].length == 0) {
+					let key = userHistory[userHistory.length-offset-3];
+					let value = userHistory[userHistory.length-offset-2];
+					await p2Remove(key, value);
+				}
+			}
+			userHistory = [];
 			setWinnerOverlay(winner);
 			return;
 		}
@@ -359,6 +404,11 @@ async function cellClick(id) {
 
 async function btnMT(){
 	enableButtons(false,false,false);
+	p2BabyBrain = {};
+	$("div.game-UI > div.p2").empty();
+	gameBoard = new Board();
+	setUpBoard();
+	paintBoard();
 	enableButtons(false,true,true);
 }
 
@@ -368,6 +418,9 @@ async function btnAT(){
 	$("div.board > div.overlay > p").show();
 	$("div.board > div.overlay > p").text("Training...");
 	await p2TeachBabyBrain();
+	gameBoard = new Board();
+	setUpBoard();
+	paintBoard();
 	$("div.board > div.overlay").hide();
 	enableButtons(true,false,true);
 }
@@ -377,18 +430,16 @@ async function btnLT(){
 	$("div.board > div.overlay").show();
 	$("div.board > div.overlay > p").show();
 	$("div.board > div.overlay > p").text("Loading...");
+	gameBoard = new Board();
+	setUpBoard();
 	await loadBigBrain();
+	paintBoard();
 	$("div.board > div.overlay").hide();
 	enableButtons(true,true,false);
 }
 
 async function run() {
-	enableButtons(false,false,false);
-	gameBoard = new Board();
-	setUpBoard();
 	await btnLT();
-	paintBoard();
-	$("div.board > div.overlay").hide();
 }
 
 run();
