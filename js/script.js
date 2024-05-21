@@ -48,7 +48,7 @@ function sleep(ms) {
 
 async function p2Add(key, value) {
 	if (p2BabyBrain[key] === undefined) {
-		$("div.game-UI > div.p2").append('<div class="entry" id='+key+'></div>');
+		$("div.game-UI > div.p2").append('<div class="entry" id='+key+' onclick="popUp(this.id)"></div>');
 		$("div.game-UI > div.p2 > div.entry#"+key).append('<div class="key">"' + key + '"</div>:');
 		$("div.game-UI > div.p2 > div.entry#"+key).append('<div class="values"></div>');
 	}
@@ -400,6 +400,10 @@ async function cellClick(id) {
 			return;
 		}
 	}
+}
+
+function popUp(id) {
+	window.d1.showModal();
 }
 
 async function btnMT(){

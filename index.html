@@ -2,11 +2,18 @@
 <html>
 <head>
 	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="font-awesome/css/all.css">
 	<title>Match Box AI</title>
 </head>
 <body>
 	<div class="game-UI">
 		<!-- <div class="p1 data"></div> -->
+
+		<dialog id="d1">
+			<div class="banner"><i class="fa-sharp fa-solid fa-xmark fa-xl" onclick="window.d1.close();"></i></div>
+			<p>Digital records may be stored in repositories, such as GCdocs, or in the business applications that create and use the records, including applications custom-made for Elections Canada. Some of these applications do not currently comply with all SStMID requirements. The Information Management (IM) team has contacted application owners to assess each existing application’s compliance; this assessment is expected to be completed by May 14, 2024. The data collected will be used to plan how the agency can become compliant while supporting the goals of our Digital Transformation Strategy.</p>
+        </dialog>
+
 		<div class="board">
 			<div class="game">
 				<div class="cell" id="0" onclick="cellClick(this.id)"></div>

@@ -1,3 +1,7 @@
+:root {
+	--dark-grey: #333;
+}
+
 div.game-UI {
 	position: relative;
 	display: flex;
@@ -34,6 +38,7 @@ div.data > div.entry {
 	flex-direction: row;
 	opacity: var(--op);
 	transition: all 0.2s ease-in;
+	cursor: pointer;
 }
 
 div.data > div.entry:hover {
@@ -130,4 +135,88 @@ div.board > div.btns {
 
 div.board > div.btns > * {
 	cursor: pointer;
+}
+
+
+/*----------------------------------------------------------------*/
+
+dialog {
+    position: relative;
+    border: 5px solid var(--dark-grey);
+    border-top-width: 0px;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: normal;
+    max-width: 450px;
+/*    color: var(--dark-grey);*/
+    padding: 0 !important;
+    outline: 0;
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+dialog a:focus {
+    outline: none;
+}
+
+dialog > .banner {
+    all: unset;
+    position: relative;
+    background: var(--dark-grey);
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    height: 2rem;
+}
+
+dialog > .banner > i{
+    display: inline-block;
+    position: relative;
+    right: 2px;
+    color: white !important;
+    cursor: pointer;
+}
+
+dialog > .nav {
+    color: #fff;
+    position: relative;
+    background: var(--dark-grey);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2rem;
+}
+
+dialog > .nav > * {
+    position: absolute;
+    cursor: pointer;
+}
+
+dialog > .nav  i{
+    display: inline-block;
+    color: white !important;
+    margin: 0 0.2rem;
+}
+
+dialog > .nav > .next {
+    right: 0;
+}
+
+dialog > .nav > .prev {
+    position: absolute;
+    left: 0;
+}
+
+dialog > p {
+    margin: 1rem;
+}
+
+dialog > h3 {
+    text-align: center;
+    margin: 1rem 1rem 0 1rem;
+    text-decoration: none;
 }
