@@ -11,7 +11,7 @@
 
 		<dialog id="d1">
 			<div class="banner"><i class="fa-sharp fa-solid fa-xmark fa-xl" onclick="window.d1.close();"></i></div>
-			<p>Digital records may be stored in repositories, such as GCdocs, or in the business applications that create and use the records, including applications custom-made for Elections Canada. Some of these applications do not currently comply with all SStMID requirements. The Information Management (IM) team has contacted application owners to assess each existing application’s compliance; this assessment is expected to be completed by May 14, 2024. The data collected will be used to plan how the agency can become compliant while supporting the goals of our Digital Transformation Strategy.</p>
+			<canvas id="dialogCanvas" width="150" height="150"></canvas>
         </dialog>
 
 		<div class="board">
@@ -39,8 +39,11 @@
 		<div class="p2 data"></div>
 	</div>
 	<script src="js/jquery.js"></script>
+	<!-- <script src="js/jcanvas.js"></script> -->
+	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123941/jcanvas.15.12.12.min.js"></script>
 	<script src="js/Pawn.js"></script>
 	<script src="js/Board.js"></script>
 	<script src="js/script.js"></script>
+	<script src="js/dialogCanvas.js"></script>
 </body>
 </html>
